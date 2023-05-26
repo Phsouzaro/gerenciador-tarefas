@@ -1,0 +1,197 @@
+openapi: 3.0.1
+info:
+  title: "Gerenciador de Tarefas"
+  version: "v1"
+servers:
+  - url: "http://localhost:8080"
+    description: "Generated server url"
+    variables:
+      basePath:
+        default: v1
+
+paths:
+  /tarefa:
+    post:
+      tags:
+        - "Tarefa"
+      operationId: "criarTarefa"
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TarefaRequest'
+      responses:
+        "201":
+          description: "CREATED"
+        "500":
+          description: "InternalServerError"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Erro'
+    get:
+      tags:
+        - "Tarefa"
+      operationId: "listarTarefas"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TarefaResponse'
+        "500":
+          description: "InternalServerError"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Erro'
+  /tarefa/{idTarefa}:
+    get:
+      tags:
+        - "Tarefa"
+      operationId: "buscarTarefaPorId"
+      parameters:
+        - name: "idTarefa"
+          in: "path"
+          description: "ID da tarefa de retorno"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TarefaResponse'
+        "500":
+          description: "InternalServerError"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+  /tarefa/{idTarefa}/editar:
+    post:
+      tags:
+        - "Tarefa"
+      operationId: "editarTarefa"
+      parameters:
+        - name: "idTarefa"
+          in: "path"
+          description: "ID da tarefa a editar"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TarefaRequest'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TarefaResponse'
+        "500":
+          description: "InternalServerError"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+  /tarefa/{idTarefa}/apagar:
+    post:
+      tags:
+        - "Tarefa"
+      operationId: "inativarTarefa"
+      parameters:
+        - name: "idTarefa"
+          in: "path"
+          description: "ID da tarefa a editar"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TarefaResponse'
+        "500":
+          description: "InternalServerError"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+components:
+  schemas:
+    TarefaRequest:
+      type: "object"
+      properties:
+        titulo:
+          type: "string"
+          example: "Titulo da tarefa"
+        descricao:
+          type: "string"
+          example: "Descricao da tarefa"
+        status:
+          type: "string"
+          description: "tarefa status"
+          example: "concluida"
+          enum:
+            - CRIADA
+            - FAZENDO
+            - FEITO
+    
+    TarefaResponse:
+      type: "object"
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 00001
+        titulo:
+          type: "string"
+          example: "Titulo da tarefa"
+        descricao:
+          type: "string"
+          example: "Descricao da tarefa"
+        status:
+          type: "string"
+          description: "tarefa status"
+          example: "concluida"
+          enum:
+            - CRIADA
+            - FAZENDO
+            - FEITO
+        ativo:
+          type: "boolean"
+          example: "true"
+
+    Erro:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          example: 20
+        correlationId:
+          type: "string"
+          example: "11b31a66-76d1-3a20-9dac-6db59996d5b3"
+        message:
+          type: "string"
+          example: "erro de validacao"
+        cause:
+          type: "string"
+          example: "Nome do cliente em branco"
